@@ -1,0 +1,41 @@
+name: Build
+on:
+  push:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - name: Install UV
+        run: pip install uv
+
+      - name: Create venv
+        run: |
+          uv venv
+
+      - name: Log python version
+        run: |
+          source .venv/bin/activate
+          python --version
+
+      - name: Add incompatible package
+        run: |
+          source .venv/bin/activate
+          uv add geojson==3.0.0
+
+      - name: Sync
+        run: |
+          source .venv/bin/activate
+          uv sync
+
+      - name: Verify env
+        run: |
+          source .venv/bin/activate
+          uv pip check
